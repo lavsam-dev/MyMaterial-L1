@@ -35,3 +35,4 @@ class ChipsFragment : Fragment() {
             ).show()
         }
     }
+}
