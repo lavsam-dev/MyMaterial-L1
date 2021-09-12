@@ -13,22 +13,31 @@ import androidx.lifecycle.ViewModelProviders
 import coil.api.load
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
 import com.learn.lavsam.mymaterial.R
 import com.learn.lavsam.mymaterial.ui.MainActivity
 import com.learn.lavsam.mymaterial.ui.chips.ChipsFragment
 import kotlinx.android.synthetic.main.bottom_sheet_layout.*
 import kotlinx.android.synthetic.main.main_fragment.*
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PictureOfTheDayFragment : Fragment() {
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
+    private val nasaDate: Calendar = Calendar.getInstance()
+    private var nasaDateCalc: Calendar = nasaDate
+    private val sdf: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+
     private val viewModel: PictureOfTheDayViewModel by lazy {
         ViewModelProviders.of(this).get(PictureOfTheDayViewModel::class.java)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel.getData()
+        val apiDate = sdf.format(nasaDateCalc.time)
+        viewModel.getData(apiDate)
             .observe(this@PictureOfTheDayFragment, Observer<PictureOfTheDayData> { renderData(it) })
     }
 
@@ -48,6 +57,20 @@ class PictureOfTheDayFragment : Fragment() {
             })
         }
         setBottomAppBar(view)
+        chipGroupMain.setOnCheckedChangeListener { chipGroupMain, position ->
+            chipGroupMain.findViewById<Chip>(position)?.let {
+                nasaDateCalc = nasaDate;
+                when (position) {
+                    1 -> { nasaDateCalc.add(Calendar.DATE, -2) }
+                    2 -> { nasaDateCalc.add(Calendar.DATE, -1) }
+                }
+                val apiDate = sdf.format(nasaDateCalc.time)
+                Toast.makeText(context, "Выбран ${it.text} Дата ${apiDate}", Toast.LENGTH_SHORT).show()
+                viewModel.getData(apiDate)
+                    .observe(this@PictureOfTheDayFragment, Observer<PictureOfTheDayData> { renderData(it) })
+            }
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
