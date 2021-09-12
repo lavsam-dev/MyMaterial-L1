@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.learn.lavsam.mymaterial.R
 import com.learn.lavsam.mymaterial.ui.MainActivity
 import com.learn.lavsam.mymaterial.ui.chips.ChipsFragment
+import kotlinx.android.synthetic.main.bottom_sheet_layout.*
 import kotlinx.android.synthetic.main.main_fragment.*
 
 class PictureOfTheDayFragment : Fragment() {
@@ -74,6 +75,8 @@ class PictureOfTheDayFragment : Fragment() {
                 val serverResponseData = data.serverResponseData
                 val url = serverResponseData.url
                 text_description.text = serverResponseData.explanation
+                bottom_sheet_description.text = serverResponseData.explanation
+                bottom_sheet_description_header.text = serverResponseData.title
                 if (url.isNullOrEmpty()) {
                     //showError("Сообщение, что ссылка пустая")
                     toast("Link is empty")
